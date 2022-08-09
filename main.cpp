@@ -5,10 +5,12 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
+#include <map>
 
-#include "Bakery-App.h"
+#include "Bakery-App.h" //Classes
 
-#define DEBUG
+#define DEBUG //Enables the debugging main menu items.
 
 using namespace std;
 
@@ -16,6 +18,8 @@ using namespace std;
 void openMain();
 void openSection(int section);
 void openItem(int section, int selection);
+void calculateReport();
+void calculateSales();
 
 //Define the specific sections to index values.
 #define SECTION_CLIENTS 1
@@ -40,6 +44,17 @@ std::string FinToStr(std::fstream& in) {
     return sstr.str();
 }
 
+std::vector<std::string> ExplodeString(std::string const& s, char delim) {
+    std::vector<std::string> result;
+    std::istringstream iss(s);
+
+    for (std::string token; std::getline(iss, token, delim);) {
+        result.push_back(std::move(token));
+    }
+
+    return result;
+}
+
 namespace Clients {
     fstream parse(bool update = false, ios_base::openmode mode = ios::out | ios::in | ios::app) {
         fstream fin;
@@ -60,8 +75,7 @@ namespace Clients {
         cout << " :: Name, Address, Sales\n";
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             cout << line << '\n';
             found = true;
         }
@@ -98,7 +112,7 @@ namespace Clients {
         string line;
         while (getline(fin, line)) {
             if (line.find(input) != string::npos) {
-                cout << line << "\n";
+                cout << line << endl;
             }
         }
 
@@ -154,8 +168,7 @@ namespace Clients {
         }
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             if (line.find(search) != string::npos) {
                 found = true;
                 break;
@@ -169,8 +182,9 @@ namespace Clients {
             return;
         }
 
-        fin.close();
-        fin = Clients::parse();
+        fin.clear();
+        fin.seekg(0, ios::beg);
+
         string clients = FinToStr(fin);
         fin.close();
 
@@ -196,7 +210,7 @@ namespace Clients {
         fin2 << clients;
         fin2.close();
 
-        cout << "\n---\nClient has been updated: " << update << "\n";
+        cout << "\n---\nClient has been updated: " << update << endl;
 
         if (remove("clients.csv")) {
             perror("Unknown error while deleting file 'clients.csv': ");
@@ -233,8 +247,7 @@ namespace Representatives {
         cout << " :: Name, Address, Sales\n";
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             cout << line << '\n';
             found = true;
         }
@@ -271,7 +284,7 @@ namespace Representatives {
         string line;
         while (getline(fin, line)) {
             if (line.find(input) != string::npos) {
-                cout << line << "\n";
+                cout << line << endl;
             }
         }
 
@@ -327,8 +340,7 @@ namespace Representatives {
         }
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             if (line.find(search) != string::npos) {
                 found = true;
                 break;
@@ -342,8 +354,9 @@ namespace Representatives {
             return;
         }
 
-        fin.close();
-        fin = Representatives::parse();
+        fin.clear();
+        fin.seekg(0, ios::beg);
+
         string representatives = FinToStr(fin);
         fin.close();
 
@@ -369,7 +382,7 @@ namespace Representatives {
         fin2 << representatives;
         fin2.close();
 
-        cout << "\n---\nRepresentative has been updated: " << update << "\n";
+        cout << "\n---\nRepresentative has been updated: " << update << endl;
 
         if (remove("representatives.csv")) {
             perror("Unknown error while deleting file 'representatives.csv': ");
@@ -386,7 +399,7 @@ namespace Representatives {
     }
 
     void report() {
-
+        calculateReport();
     }
 }
 
@@ -410,8 +423,7 @@ namespace Products {
         cout << " :: Name, Type, Price\n";
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             cout << line << '\n';
             found = true;
         }
@@ -448,7 +460,7 @@ namespace Products {
         string line;
         while (getline(fin, line)) {
             if (line.find(input) != string::npos) {
-                cout << line << "\n";
+                cout << line << endl;
             }
         }
 
@@ -504,8 +516,7 @@ namespace Products {
         }
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             if (line.find(search) != string::npos) {
                 found = true;
                 break;
@@ -546,7 +557,7 @@ namespace Products {
         fin2 << products;
         fin2.close();
 
-        cout << "\n---\nProduct has been updated: " << update << "\n";
+        cout << "\n---\nProduct has been updated: " << update << endl;
 
         if (remove("products.csv")) {
             perror("Unknown error while deleting file 'products.csv': ");
@@ -563,7 +574,7 @@ namespace Products {
     }
 
     void report() {
-
+        calculateSales();
     }
 }
 
@@ -587,8 +598,7 @@ namespace Sales {
         cout << " :: Name, Product, Date, Representative\n";
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             cout << line << '\n';
             found = true;
         }
@@ -625,7 +635,7 @@ namespace Sales {
         string line;
         while (getline(fin, line)) {
             if (line.find(input) != string::npos) {
-                cout << line << "\n";
+                cout << line << endl;
             }
         }
 
@@ -681,8 +691,7 @@ namespace Sales {
         }
 
         string line; bool found = false;
-        while (getline(fin, line))
-        {
+        while (getline(fin, line)) {
             if (line.find(search) != string::npos) {
                 found = true;
                 break;
@@ -723,7 +732,7 @@ namespace Sales {
         fin2 << sales;
         fin2.close();
 
-        cout << "\n---\nSales has been updated: " << update << "\n";
+        cout << "\n---\nSales has been updated: " << update << endl;
 
         if (remove("sales.csv")) {
             perror("Unknown error while deleting file 'sales.csv': ");
@@ -738,6 +747,131 @@ namespace Sales {
 
         openSection(SECTION_SALES);
     }
+}
+
+float roundoff(float value, unsigned char prec)
+{
+    float pow_10 = pow(10.0f, (float)prec);
+    return round(value * pow_10) / pow_10;
+}
+
+void calculateReport() {
+    cout << "\n---\nPlease input a sales representative: ";
+    string representative;
+    getline(cin >> ws, representative);
+
+    cout << "\n---\nPlease input a year: ";
+    string year;
+    getline(cin >> ws, year);
+
+    fstream fin = Sales::parse();
+
+    if (!fin.is_open()) {
+        cout << "Unable to open file.\n---\nPlease input any value to continue: ";
+        int selection;
+        cin >> selection;
+        return;
+    }
+
+    string line; bool found = false; vector<string> products;
+    while (getline(fin, line)) {
+        if (line.find(representative) != string::npos && line.find(year) != string::npos) {
+            auto v = ExplodeString(line, ',');
+            products.push_back(v[1]);
+            //cout << v[1];
+            found = true;
+        }
+    }
+
+    fin.close();
+
+    fin = Products::parse();
+
+    float total = 0.0;
+    for (string x : products) {
+        fin.clear();
+        fin.seekg(0, ios::beg);
+
+        while (getline(fin, line)) {
+            if (line.find(x) != string::npos) {
+                auto v = ExplodeString(line, ',');
+                v[2].erase(0, 1);
+                total += stof(v[2]);
+            }
+        }
+    }
+
+    cout << "Total: " << roundoff(total, 1) << endl;
+    cout << "Bonus: " << roundoff(total * 0.1, 2) << endl;
+
+    fin.close();
+
+    cout << "\n---\nPlease input any value to continue: ";
+    int selection;
+    cin >> selection;
+
+    openSection(SECTION_REPRESENTATIVES);
+}
+
+void calculateSales() {
+    cout << "\n---\nPlease input a month to calculate: ";
+    string month;
+    getline(cin >> ws, month);
+
+    cout << "\n---\nPlease input a year to calculate: ";
+    string year;
+    getline(cin >> ws, year);
+
+    fstream fin = Sales::parse();
+
+    if (!fin.is_open()) {
+        cout << "Unable to open file.\n---\nPlease input any value to continue: ";
+        int selection;
+        cin >> selection;
+        return;
+    }
+
+    string line; bool found = false; vector<string> name;
+    while (getline(fin, line)) {
+        if (line.find(month) != string::npos && line.find(year) != string::npos) {
+            auto v = ExplodeString(line, ',');
+            if (std::find(name.begin(), name.end(), v[1]) == name.end()) {
+                name.push_back(v[1]);
+            }
+            //cout << v[1];
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Unable to find client.\n---\nPlease input any value to continue: ";
+        int selection;
+        cin >> selection;
+        return;
+    }
+
+    int total = 0;
+    for (string x : name) {
+        fin.clear();
+        fin.seekg(0, ios::beg);
+        
+        total = 0;
+        while (getline(fin, line)) {
+            if (line.find(x) != string::npos && line.find(month) != string::npos && line.find(year) != string::npos) {
+                total++;
+            }
+        }
+
+        cout << x << ": " << total << endl;
+    }
+
+    fin.close();
+
+    cout << "\n---\nPlease input any value to continue: ";
+    int selection;
+    cin >> selection;
+
+    openSection(SECTION_PRODUCTS);
 }
 
 char const* getSectionName(int section) {
@@ -865,7 +999,7 @@ void openSection(int section) {
 
     system("cls");
     cout << "Bakery Business\n";
-    cout << " - " << getSectionName(section) << "\n";
+    cout << " - " << getSectionName(section) << endl;
     cout << "Available Options: \n";
 
     switch (section) {

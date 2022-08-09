@@ -1,8 +1,7 @@
 #ifndef BAKERY_APP_H
 #define BAKERY_APP
 
-class Set
-{
+class Set {
     public:
         Set();
         void Parse();
@@ -12,6 +11,6 @@ class Set
         void Update();
         void Delete();
         void Report();
-    };
+};
 
 #endif
