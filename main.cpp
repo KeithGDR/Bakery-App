@@ -920,7 +920,7 @@ void createDummyData() {
 
     if (fin.is_open()) {
         cout << "[DEBUG] Creating products dummy data...\n";
-        fin << "Cake,product,$19.99\nDonuts,product,$5.99\nCookies,product,$3.99\nCustom,service,$100.00";
+        fin << "Cake,product,$19.99\nDonuts,product,$5.99\nCookies,product,$3.99\nCustom,service,$100.00\n";
         fin.close();
     }
 
@@ -1027,7 +1027,7 @@ void openSection(int section) {
             break;
         }
         case 4: {
-            cout << "- 1. Purchase a Product/Service\n";
+            cout << " - 1. Purchase a Product/Service\n";
             cout << " - 2. List All Sales For The Year\n";
             cout << " - 3. List All Sales For The Year From A Specific Client\n";
             cout << " - 4. Update A Specific Sales Information\n";
